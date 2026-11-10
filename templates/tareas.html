@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titulo %}Mis tareas{% endblock %}
+{% block contenido %}
+<div class="card">
+  <form method="get" class="fila">
+    <label>Buscar <input name="q" value="{{ q }}" placeholder="título o descripción"></label>
+    <label>Estado
+      <select name="estado">
+        <option value="">Todos</option>
+        {% for e in estados %}<option value="{{ e }}" {{ 'selected' if e == estado }}>{{ e|capitalize }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Prioridad
+      <select name="prioridad">
+        <option value="">Todas</option>
+        {% for p in prioridades %}<option value="{{ p }}" {{ 'selected' if p == prioridad }}>{{ p|capitalize }}</option>{% endfor %}
+      </select>
+    </label>
+    <button type="submit">Filtrar</button>
+  </form>
+</div>
+
+{% for t in tareas %}
+<div class="card {{ t['estado'] }}">
+  <div class="titulo"><strong>{{ t['titulo'] }}</strong>
+    <span class="etiqueta {{ t['prioridad'] }}">{{ t['prioridad'] }}</span>
+    <span class="etiqueta">{{ t['estado'] }}</span>
+  </div>
+  {% if t['descripcion'] %}<p>{{ t['descripcion'] }}</p>{% endif %}
+  <small>Asignada a: {{ t['asignado_nombre'] }}{% if t['fecha_limite'] %} · Vence: {{ t['fecha_limite'] }}{% endif %}</small>
+  <p>
+    <form class="inline" method="post" action="{{ url_for('tarea_estado', tarea_id=t['id']) }}">
+      <button class="gris" type="submit">{{ 'Marcar pendiente' if t['estado'] == 'completada' else 'Marcar completada' }}</button>
+    </form>
+    {% if t['creador_id'] == g.user['id'] %}
+      <a class="btn" href="{{ url_for('tarea_editar', tarea_id=t['id']) }}">Editar</a>
+      <form class="inline" method="post" action="{{ url_for('tarea_eliminar', tarea_id=t['id']) }}"
+            onsubmit="return confirm('¿Eliminar esta tarea?');">
+        <button class="rojo" type="submit">Eliminar</button>
+      </form>
+    {% endif %}
+  </p>
+</div>
+{% else %}
+<div class="card">No hay tareas para mostrar.</div>
+{% endfor %}
+{% endblock %}

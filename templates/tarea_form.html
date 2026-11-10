@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block titulo %}{{ 'Editar' if tarea else 'Nueva' }} tarea{% endblock %}
+{% block contenido %}
+<div class="card">
+  <h2>{{ 'Editar' if tarea else 'Nueva' }} tarea</h2>
+  <form method="post">
+    <label>Título <input name="titulo" maxlength="100" value="{{ tarea['titulo'] if tarea else '' }}"></label>
+    <label>Descripción <textarea name="descripcion" rows="3">{{ tarea['descripcion'] if tarea else '' }}</textarea></label>
+    <label>Prioridad
+      <select name="prioridad">
+        {% for p in prioridades %}<option value="{{ p }}" {{ 'selected' if (tarea and tarea['prioridad'] == p) or (not tarea and p == 'media') }}>{{ p|capitalize }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Fecha límite <input name="fecha_limite" type="date" value="{{ tarea['fecha_limite'] if tarea and tarea['fecha_limite'] else '' }}"></label>
+    <label>Asignar a
+      <select name="asignado_id">
+        {% for u in usuarios %}<option value="{{ u['id'] }}" {{ 'selected' if (tarea and tarea['asignado_id'] == u['id']) or (not tarea and u['id'] == g.user['id']) }}>{{ u['nombre'] }}</option>{% endfor %}
+      </select>
+    </label>
+    <p><button type="submit">Guardar</button> <a class="btn gris" href="{{ url_for('tareas') }}">Cancelar</a></p>
+  </form>
+</div>
+{% endblock %}

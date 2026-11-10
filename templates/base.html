@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Gestor de Tareas{% endblock %}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #f4f6f8; color: #1f2933; }
+    nav { background: #1b5e20; color: #fff; padding: .8rem 1.2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    nav a { color: #fff; text-decoration: none; }
+    nav .marca { font-weight: 700; margin-right: auto; }
+    main { max-width: 900px; margin: 1.5rem auto; padding: 0 1rem; }
+    .card { background: #fff; border-radius: 8px; padding: 1rem 1.2rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+    label { display: block; margin-top: .7rem; font-weight: 600; }
+    input, select, textarea { width: 100%; padding: .5rem; margin-top: .25rem; box-sizing: border-box; }
+    button, .btn { background: #2e7d32; color: #fff; border: 0; padding: .5rem .9rem; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; font-size: .9rem; }
+    button.rojo { background: #c62828; }
+    button.gris, .btn.gris { background: #607d8b; }
+    .msg { padding: .6rem .9rem; border-radius: 6px; margin-bottom: .8rem; }
+    .msg.ok { background: #e8f5e9; } .msg.error { background: #ffebee; }
+    .fila { display: flex; gap: .5rem; flex-wrap: wrap; align-items: end; }
+    .fila > * { flex: 1; min-width: 140px; }
+    .etiqueta { font-size: .75rem; padding: .1rem .5rem; border-radius: 10px; background: #e0e0e0; }
+    .alta { background: #ffcdd2; } .media { background: #fff9c4; } .baja { background: #c8e6c9; }
+    .completada .titulo { text-decoration: line-through; color: #777; }
+    form.inline { display: inline; }
+  </style>
+</head>
+<body>
+  <nav>
+    <span class="marca">Plásticos Sustentables · Tareas</span>
+    {% if g.user %}
+      <a href="{{ url_for('tareas') }}">Mis tareas</a>
+      <a href="{{ url_for('tarea_nueva') }}">Nueva tarea</a>
+      <a href="{{ url_for('perfil') }}">{{ g.user['nombre'] }}</a>
+      <a href="{{ url_for('logout') }}">Salir</a>
+    {% else %}
+      <a href="{{ url_for('login') }}">Iniciar sesión</a>
+      <a href="{{ url_for('register') }}">Registrarse</a>
+    {% endif %}
+  </nav>
+  <main>
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% for categoria, texto in mensajes %}
+        <div class="msg {{ categoria }}">{{ texto }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block contenido %}{% endblock %}
+  </main>
+</body>
+</html>
